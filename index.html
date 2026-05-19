@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axiom Flow — AI Workflow Automation for South African Businesses</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0f;
+            --black-light: #111118;
+            --black-lighter: #1a1a25;
+            --blue: #0066ff;
+            --blue-glow: #0066ff40;
+            --blue-light: #3385ff;
+            --cyan: #00d4ff;
+            --cyan-glow: #00d4ff30;
+            --white: #ffffff;
+            --gray: #8a8a9a;
+            --gray-dark: #4a4a5a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        #hero-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        nav {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.4s ease;
+        }
+        nav.scrolled {
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            padding: 15px 5%;
+            border-bottom: 1px solid rgba(0, 102, 255, 0.1);
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+        @keyframes logoPulse {
+            0%, 100% { box-shadow: 0 0 20px var(--blue-glow); }
+            50% { box-shadow: 0 0 40px var(--cyan-glow); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        .nav-links a:hover { color: var(--white); }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; left: 0;
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, var(--blue), var(--cyan));
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after { width: 100%; }
+
+        .nav-cta {
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            color: var(--white);
+            padding: 12px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px var(--blue-glow);
+        }
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--blue-glow), 0 0 60px var(--cyan-glow);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            padding: 120px 5% 80px;
+            text-align: center;
+        }
+        .hero-content { max-width: 900px; }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 102, 255, 0.1);
+            border: 1px solid rgba(0, 102, 255, 0.3);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--blue-light);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease;
+        }
+        .hero-badge .dot {
+            width: 8px; height: 8px;
+            background: var(--cyan);
+            border-radius: 50%;
+            animation: blink 2s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+        .hero h1 .gradient-text {
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+        .hero-cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            color: var(--white);
+            padding: 16px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 30px var(--blue-glow);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 40px var(--blue-glow), 0 0 80px var(--cyan-glow);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            padding: 16px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid var(--gray-dark);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-secondary:hover {
+            border-color: var(--blue);
+            background: rgba(0, 102, 255, 0.05);
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 80px;
+            animation: fadeInUp 0.8s ease 0.8s both;
+        }
+        .stat { text-align: center; }
+        .stat-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+
+        .floating-cards {
+            position: absolute;
+            width: 100%; height: 100%;
+            top: 0; left: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .float-card {
+            position: absolute;
+            background: rgba(17, 17, 24, 0.6);
+            border: 1px solid rgba(0, 102, 255, 0.15);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            animation: float 6s ease-in-out infinite;
+        }
+        .float-card:nth-child(1) { top: 15%; left: 8%; animation-delay: 0s; }
+        .float-card:nth-child(2) { top: 60%; left: 5%; animation-delay: 1.5s; }
+        .float-card:nth-child(3) { top: 20%; right: 8%; animation-delay: 3s; }
+        .float-card:nth-child(4) { top: 55%; right: 5%; animation-delay: 4.5s; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotateX(0deg) rotateY(0deg); }
+            25% { transform: translateY(-15px) rotateX(2deg) rotateY(-2deg); }
+            50% { transform: translateY(-25px) rotateX(0deg) rotateY(2deg); }
+            75% { transform: translateY(-10px) rotateX(-2deg) rotateY(0deg); }
+        }
+        .float-card-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        .float-card h4 { font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; }
+        .float-card p { font-size: 0.75rem; color: var(--gray); }
+
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 100px 5%;
+        }
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+        .section-label {
+            display: inline-block;
+            background: rgba(0, 102, 255, 0.1);
+            border: 1px solid rgba(0, 102, 255, 0.2);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--blue-light);
+            font-weight: 500;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .section-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .section-header p { color: var(--gray); font-size: 1.1rem; }
+
+        .problem-section {
+            background: linear-gradient(180deg, var(--black) 0%, var(--black-light) 50%, var(--black) 100%);
+        }
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .problem-card {
+            background: rgba(17, 17, 24, 0.8);
+            border: 1px solid rgba(0, 102, 255, 0.1);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .problem-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--blue), var(--cyan));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+        .problem-card:hover::before { transform: scaleX(1); }
+        .problem-card:hover {
+            border-color: rgba(0, 102, 255, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 102, 255, 0.1);
+        }
+        .problem-icon {
+            width: 56px; height: 56px;
+            background: rgba(0, 102, 255, 0.1);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0, 102, 255, 0.2);
+        }
+        .problem-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; }
+        .problem-card p { color: var(--gray); font-size: 0.9rem; }
+
+        .solution-section { position: relative; }
+        .solution-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: center;
+        }
+        @media (max-width: 900px) { .solution-grid { grid-template-columns: 1fr; } }
+
+        .solution-visual {
+            position: relative;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .solution-orb {
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, var(--blue), transparent 70%);
+            position: absolute;
+            animation: orbPulse 4s ease-in-out infinite;
+            filter: blur(40px);
+            opacity: 0.6;
+        }
+        @keyframes orbPulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+        .solution-orb-2 {
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 70% 70%, var(--cyan), transparent 70%);
+            position: absolute;
+            animation: orbPulse 4s ease-in-out infinite 2s;
+            filter: blur(30px);
+            opacity: 0.4;
+        }
+        .solution-mockup {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 450px;
+            background: var(--black-lighter);
+            border: 1px solid rgba(0, 102, 255, 0.2);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 60px rgba(0, 102, 255, 0.1);
+            animation: mockupFloat 5s ease-in-out infinite;
+        }
+        @keyframes mockupFloat {
+            0%, 100% { transform: translateY(0) rotateX(0deg); }
+            50% { transform: translateY(-15px) rotateX(2deg); }
+        }
+        .mockup-header {
+            background: rgba(0, 102, 255, 0.1);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(0, 102, 255, 0.1);
+        }
+        .mockup-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .mockup-dot.red { background: #ff5f57; }
+        .mockup-dot.yellow { background: #febc2e; }
+        .mockup-dot.green { background: #28c840; }
+        .mockup-content { padding: 24px; }
+        .mockup-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(0, 102, 255, 0.05);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(0, 102, 255, 0.1);
+            animation: slideIn 0.5s ease both;
+        }
+        .mockup-item:nth-child(1) { animation-delay: 0.1s; }
+        .mockup-item:nth-child(2) { animation-delay: 0.3s; }
+        .mockup-item:nth-child(3) { animation-delay: 0.5s; }
+        .mockup-item:nth-child(4) { animation-delay: 0.7s; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .mockup-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .mockup-text h5 { font-size: 0.85rem; font-weight: 600; margin-bottom: 2px; }
+        .mockup-text p { font-size: 0.75rem; color: var(--gray); }
+        .mockup-status {
+            margin-left: auto;
+            padding: 4px 10px;
+            background: rgba(0, 212, 255, 0.15);
+            color: var(--cyan);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .solution-text h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .solution-text p { color: var(--gray); margin-bottom: 24px; font-size: 1.05rem; }
+        .solution-list { list-style: none; }
+        .solution-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 18px;
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+        .solution-list .check {
+            width: 24px; height: 24px;
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .how-section { background: var(--black-light); }
+        .steps-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .steps-line {
+            position: absolute;
+            left: 50%;
+            top: 0; bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--blue), var(--cyan));
+            transform: translateX(-50%);
+            opacity: 0.3;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        .step:nth-child(even) { flex-direction: row-reverse; }
+        .step-number {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            box-shadow: 0 0 40px var(--blue-glow);
+            position: relative;
+            z-index: 2;
+        }
+        .step-content {
+            flex: 1;
+            background: rgba(17, 17, 24, 0.8);
+            border: 1px solid rgba(0, 102, 255, 0.1);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.4s ease;
+        }
+        .step-content:hover {
+            border-color: rgba(0, 102, 255, 0.3);
+            transform: scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 102, 255, 0.1);
+        }
+        .step-content h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 10px; }
+        .step-content p { color: var(--gray); font-size: 0.95rem; }
+
+        @media (max-width: 768px) {
+            .steps-line { left: 30px; }
+            .step, .step:nth-child(even) { flex-direction: column; align-items: flex-start; padding-left: 60px; }
+            .step-number { position: absolute; left: 0; }
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background: rgba(17, 17, 24, 0.6);
+            border: 1px solid rgba(0, 102, 255, 0.1);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 150px; height: 150px;
+            background: radial-gradient(circle, var(--blue-glow), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .feature-card:hover::after { opacity: 1; }
+        .feature-card:hover {
+            border-color: rgba(0, 102, 255, 0.3);
+            transform: translateY(-5px);
+        }
+        .feature-icon {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.2), rgba(0, 212, 255, 0.2));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0, 102, 255, 0.2);
+        }
+        .feature-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; }
+        .feature-card p { color: var(--gray); font-size: 0.9rem; }
+
+        .testimonials-section {
+            background: linear-gradient(180deg, var(--black) 0%, var(--black-light) 50%, var(--black) 100%);
+        }
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .testimonial-card {
+            background: rgba(17, 17, 24, 0.8);
+            border: 1px solid rgba(0, 102, 255, 0.1);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        .testimonial-card:hover {
+            border-color: rgba(0, 102, 255, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 102, 255, 0.08);
+        }
+        .testimonial-quote {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 24px;
+            color: var(--white);
+            font-style: italic;
+        }
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .testimonial-avatar {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .testimonial-info h4 { font-size: 0.95rem; font-weight: 600; }
+        .testimonial-info p { font-size: 0.8rem; color: var(--gray); }
+        .testimonial-stars { color: var(--cyan); font-size: 0.9rem; margin-bottom: 16px; }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1000px;
+            margin: 0 auto;
+            align-items: start;
+        }
+        .pricing-card {
+            background: rgba(17, 17, 24, 0.8);
+            border: 1px solid rgba(0, 102, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px 32px;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        .pricing-card:hover {
+            border-color: rgba(0, 102, 255, 0.3);
+            transform: translateY(-5px);
+        }
+        .pricing-card.featured {
+            border-color: rgba(0, 102, 255, 0.4);
+            background: linear-gradient(180deg, rgba(0, 102, 255, 0.08), rgba(17, 17, 24, 0.8));
+            transform: scale(1.05);
+        }
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+        .pricing-badge {
+            position: absolute;
+            top: -12px; left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            padding: 6px 20px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .pricing-card h3 { font-size: 1.3rem; font-weight: 600; margin-bottom: 8px; }
+        .pricing-card .price {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+        .pricing-card .price span { font-size: 1rem; color: var(--gray); font-weight: 400; }
+        .pricing-card p { color: var(--gray); font-size: 0.9rem; margin-bottom: 24px; }
+        .pricing-features { list-style: none; margin-bottom: 32px; }
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        .pricing-features .check { color: var(--cyan); font-weight: 700; }
+        .pricing-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .pricing-btn.primary {
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            color: var(--white);
+            box-shadow: 0 4px 20px var(--blue-glow);
+        }
+        .pricing-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--blue-glow);
+        }
+        .pricing-btn.secondary {
+            background: transparent;
+            color: var(--white);
+            border: 1px solid var(--gray-dark);
+        }
+        .pricing-btn.secondary:hover {
+            border-color: var(--blue);
+            background: rgba(0, 102, 255, 0.05);
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 120px 5%;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-orb {
+            position: absolute;
+            width: 600px; height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--blue-glow), transparent 70%);
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            animation: ctaPulse 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes ctaPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.8; }
+        }
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .cta-content h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .cta-content p { color: var(--gray); font-size: 1.1rem; margin-bottom: 40px; }
+
+        footer {
+            background: var(--black-light);
+            border-top: 1px solid rgba(0, 102, 255, 0.1);
+            padding: 60px 5% 30px;
+            position: relative;
+            z-index: 1;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto 40px;
+        }
+        @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+        .footer-brand p { color: var(--gray); font-size: 0.9rem; margin-top: 16px; max-width: 300px; }
+        .footer-col h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 20px; color: var(--white); }
+        .footer-col ul { list-style: none; }
+        .footer-col li { margin-bottom: 12px; }
+        .footer-col a { color: var(--gray); text-decoration: none; font-size: 0.85rem; transition: color 0.3s ease; }
+        .footer-col a:hover { color: var(--blue-light); }
+        .footer-bottom {
+            border-top: 1px solid rgba(0, 102, 255, 0.1);
+            padding-top: 30px;
+            text-align: center;
+            color: var(--gray-dark);
+            font-size: 0.8rem;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease;
+        }
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--black); }
+        ::-webkit-scrollbar-thumb { background: var(--gray-dark); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .nav-links, .nav-cta { display: none; }
+            .mobile-menu-btn { display: block; }
+            .hero-stats { flex-direction: column; gap: 30px; }
+            .steps-line { display: none; }
+            .step, .step:nth-child(even) { flex-direction: column; align-items: flex-start; padding-left: 60px; }
+            .step-number { position: absolute; left: 0; }
+            .pricing-card.featured { transform: none; }
+            .pricing-card.featured:hover { transform: translateY(-5px); }
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="hero-canvas"></canvas>
+
+    <nav id="navbar">
+        <a href="#" class="logo">
+            <div class="logo-icon">&#9889;</div>
+            Axiom Flow
+        </a>
+        <ul class="nav-links">
+            <li><a href="#problem">Problem</a></li>
+            <li><a href="#solution">Solution</a></li>
+            <li><a href="#how">How It Works</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+        </ul>
+        <a href="#cta" class="nav-cta">Get Started Free</a>
+        <button class="mobile-menu-btn">&#9776;</button>
+    </nav>
+
+    <section class="hero">
+        <div class="floating-cards">
+            <div class="float-card">
+                <div class="float-card-icon">&#9993;</div>
+                <h4>Auto-Reply</h4>
+                <p>Smart email responses</p>
+            </div>
+            <div class="float-card">
+                <div class="float-card-icon">&#128202;</div>
+                <h4>Reports</h4>
+                <p>Auto-generated summaries</p>
+            </div>
+            <div class="float-card">
+                <div class="float-card-icon">&#128197;</div>
+                <h4>Scheduling</h4>
+                <p>Calendar management</p>
+            </div>
+            <div class="float-card">
+                <div class="float-card-icon">&#9989;</div>
+                <h4>Tasks</h4>
+                <p>Intelligent prioritization</p>
+            </div>
+        </div>
+
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                Now serving South African businesses
+            </div>
+            <h1>
+                Stop Drowning in<br>
+                <span class="gradient-text">Admin Work</span>
+            </h1>
+            <p>
+                Axiom Flow uses AI to automate your repetitive tasks, organize operations,
+                and free your team to focus on what actually grows your business.
+            </p>
+            <div class="hero-cta-group">
+                <a href="#cta" class="btn-primary">
+                    Start Free Trial
+                    <span>&#8594;</span>
+                </a>
+                <a href="#solution" class="btn-secondary">
+                    See How It Works
+                    <span>&#9654;</span>
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-number">15+</div>
+                    <div class="stat-label">Hours Saved Weekly</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">78%</div>
+                    <div class="stat-label">Fewer Human Errors</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">3x</div>
+                    <div class="stat-label">Faster Operations</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="problem-section" id="problem">
+        <div class="section-header animate-on-scroll">
+            <div class="section-label">The Problem</div>
+            <h2>South African Businesses Are<br><span class="gradient-text">Wasting Time</span></h2>
+            <p>Your team did not join your company to do data entry, chase approvals, or copy-paste between spreadsheets. But that is exactly what most South African SMEs spend 40% of their week doing.</p>
+        </div>
+        <div class="problem-grid">
+            <div class="problem-card animate-on-scroll">
+                <div class="problem-icon">&#9200;</div>
+                <h3>Time Drain</h3>
+                <p>South African SMEs lose an average of 15+ hours per week to repetitive admin tasks.</p>
+            </div>
+            <div class="problem-card animate-on-scroll">
+                <div class="problem-icon">&#10060;</div>
+                <h3>Human Error</h3>
+                <p>Manual data entry and copy-paste workflows create costly mistakes.</p>
+            </div>
+            <div class="problem-card animate-on-scroll">
+                <div class="problem-icon">&#128268;</div>
+                <h3>Tool Overload</h3>
+                <p>Businesses juggle 8-12 different apps that do not talk to each other.</p>
+            </div>
+            <div class="problem-card animate-on-scroll">
+                <div class="problem-icon">&#128176;</div>
+                <h3>Missed Revenue</h3>
+                <p>When your best people are stuck in admin, they are not selling or serving customers.</p>
+            </div>
+            <div class="problem-card animate-on-scroll">
+                <div class="problem-icon">&#128555;</div>
+                <h3>Staff Burnout</h3>
+                <p>Skilled employees leave when they are reduced to data entry clerks.</p>
+            </div>
+            <div class="problem-card animate-on-scroll">
+                <div class="problem-icon">&#128034;</div>
+                <h3>Slow Decisions</h3>
+                <p>Without real-time visibility, leaders make decisions based on gut feel.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="solution-section" id="solution">
+        <div class="section-header animate-on-scroll">
+            <div class="section-label">The Solution</div>
+            <h2>Meet <span class="gradient-text">Axiom Flow</span></h2>
+            <p>An AI-powered workflow automation service built specifically for South African businesses.</p>
+        </div>
+        <div class="solution-grid">
+            <div class="solution-visual">
+                <div class="solution-orb"></div>
+                <div class="solution-orb-2"></div>
+                <div class="solution-mockup">
+                    <div class="mockup-header">
+                        <div class="mockup-dot red"></div>
+                        <div class="mockup-dot yellow"></div>
+                        <div class="mockup-dot green"></div>
+                        <span style="margin-left: auto; font-size: 0.75rem; color: var(--gray);">Axiom Flow Dashboard</span>
+                    </div>
+                    <div class="mockup-content">
+                        <div class="mockup-item">
+                            <div class="mockup-icon">&#9993;</div>
+                            <div class="mockup-text">
+                                <h5>Email Auto-Sort</h5>
+                                <p>12 emails processed</p>
+                            </div>
+                            <div class="mockup-status">Active</div>
+                        </div>
+                        <div class="mockup-item">
+                            <div class="mockup-icon">&#128202;</div>
+                            <div class="mockup-text">
+                                <h5>Weekly Report</h5>
+                                <p>Generated 2 hours ago</p>
+                            </div>
+                            <div class="mockup-status">Done</div>
+                        </div>
+                        <div class="mockup-item">
+                            <div class="mockup-icon">&#128197;</div>
+                            <div class="mockup-text">
+                                <h5>Calendar Sync</h5>
+                                <p>8 meetings scheduled</p>
+                            </div>
+                            <div class="mockup-status">Active</div>
+                        </div>
+                        <div class="mockup-item">
+                            <div class="mockup-icon">&#9989;</div>
+                            <div class="mockup-text">
+                                <h5>Task Assignment</h5>
+                                <p>23 tasks auto-assigned</p>
+                            </div>
+                            <div class="mockup-status">Active</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="solution-text animate-on-scroll">
+                <h3>AI That Actually Understands Your Business</h3>
+                <p>Unlike generic automation tools that leave you to figure everything out, Axiom Flow combines cutting-edge AI with hands-on implementation.</p>
+                <ul class="solution-list">
+                    <li><span class="check">&#10003;</span><span><strong>Done-For-You Setup:</strong> We configure every automation to match your exact processes.</span></li>
+                    <li><span class="check">&#10003;</span><span><strong>Human-in-the-Loop:</strong> Every critical decision gets a human checkpoint.</span></li>
+                    <li><span class="check">&#10003;</span><span><strong>Local Support:</strong> South African-based team that understands your context.</span></li>
+                    <li><span class="check">&#10003;</span><span><strong>Works With What You Have:</strong> Integrates with Gmail, Outlook, Xero, Sage, WhatsApp, and more.</span></li>
+                    <li><span class="check">&#10003;</span><span><strong>Measurable ROI:</strong> Dashboard shows exactly how much time and money you are saving.</span></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-section" id="how">
+        <div class="section-header animate-on-scroll">
+            <div class="section-label">Process</div>
+            <h2>How <span class="gradient-text">Axiom Flow</span> Works</h2>
+            <p>From first conversation to fully automated operations in under two weeks.</p>
+        </div>
+        <div class="steps-container">
+            <div class="steps-line"></div>
+            <div class="step animate-on-scroll">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Discovery & Mapping</h3>
+                    <p>We spend 60-90 minutes understanding your current workflows, pain points, and tools.</p>
+                </div>
+            </div>
+            <div class="step animate-on-scroll">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Custom Automation Design</h3>
+                    <p>Our team designs AI-powered workflows tailored to your exact processes.</p>
+                </div>
+            </div>
+            <div class="step animate-on-scroll">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Implementation & Integration</h3>
+                    <p>We build and connect everything. Your existing tools stay, we just make them talk to each other.</p>
+                </div>
+            </div>
+            <div class="step animate-on-scroll">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Testing & Handover</h3>
+                    <p>We run every automation through real-world scenarios with your team.</p>
+                </div>
+            </div>
+            <div class="step animate-on-scroll">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h3>Ongoing Optimization</h3>
+                    <p>We monitor performance, refine AI prompts, and provide monthly ROI reports.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features">
+        <div class="section-header animate-on-scroll">
+            <div class="section-label">Capabilities</div>
+            <h2>What <span class="gradient-text">Axiom Flow</span> Automates</h2>
+            <p>Every feature is designed to eliminate repetitive work and give your team their time back.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">&#9993;</div>
+                <h3>Intelligent Email Management</h3>
+                <p>AI reads, classifies, and drafts responses to routine emails. Urgent messages get flagged.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">&#128197;</div>
+                <h3>Smart Calendar & Scheduling</h3>
+                <p>Automatically schedule meetings, send reminders, handle rescheduling, and block focus time.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">&#128196;</div>
+                <h3>Document Processing & Generation</h3>
+                <p>Extract data from invoices, receipts, and forms automatically. Generate quotes and contracts.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">&#128202;</div>
+                <h3>Automated Reporting</h3>
+                <p>Pull data from multiple sources, compile weekly and monthly reports automatically.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">&#9989;</div>
+                <h3>Task Management & Routing</h3>
+                <p>AI assigns tasks to the right person based on workload, skills, and urgency.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">&#128172;</div>
+                <h3>WhatsApp & Communication Hub</h3>
+                <p>Centralize WhatsApp Business, email, and Slack messages. Auto-respond to common queries.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">&#128268;</div>
+                <h3>200+ Integrations</h3>
+                <p>Connects with Xero, Sage, Salesforce, HubSpot, Google Workspace, Microsoft 365, and more.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">&#128274;</div>
+                <h3>POPIA-Compliant & Secure</h3>
+                <p>Data stays in secure, encrypted environments. Full audit trails. Built for SA compliance.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">&#128200;</div>
+                <h3>Real-Time Analytics Dashboard</h3>
+                <p>See exactly how much time and money you are saving. Track automation performance.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials-section">
+        <div class="section-header animate-on-scroll">
+            <div class="section-label">Results</div>
+            <h2>What South African<br><span class="gradient-text">Businesses Say</span></h2>
+            <p>Real results from real companies. These are the kinds of transformations we deliver.</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card animate-on-scroll">
+                <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-quote">"We were spending 20 hours a week on invoice processing and client follow-ups. Axiom Flow automated 80% of it within two weeks."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">SM</div>
+                    <div class="testimonial-info">
+                        <h4>Sarah Mokoena</h4>
+                        <p>Operations Director, Cape Town Consulting Firm</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card animate-on-scroll">
+                <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-quote">"The WhatsApp integration alone saved us. Our dental practice gets 50+ appointment requests daily. Now patients book automatically. No-shows dropped by 40%."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">DN</div>
+                    <div class="testimonial-info">
+                        <h4>Dr. Nkosi</h4>
+                        <p>Owner, Johannesburg Dental Practice</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card animate-on-scroll">
+                <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-quote">"I was skeptical about AI for our property management business. But Axiom Flow handles tenant inquiries, maintenance scheduling, and monthly reporting. I get 12 hours of my week back."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">JP</div>
+                    <div class="testimonial-info">
+                        <h4>James Peters</h4>
+                        <p>Managing Director, Durban Property Group</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing">
+        <div class="section-header animate-on-scroll">
+            <div class="section-label">Investment</div>
+            <h2>Simple, Transparent <span class="gradient-text">Pricing</span></h2>
+            <p>No hidden fees. No long-term contracts. Start small and scale as you see results.</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card animate-on-scroll">
+                <h3>Starter</h3>
+                <div class="price">R3,500<span>/month</span></div>
+                <p>Perfect for small teams ready to automate their first workflows.</p>
+                <ul class="pricing-features">
+                    <li><span class="check">&#10003;</span> Up to 3 active workflows</li>
+                    <li><span class="check">&#10003;</span> Email & calendar automation</li>
+                    <li><span class="check">&#10003;</span> WhatsApp Business integration</li>
+                    <li><span class="check">&#10003;</span> Basic reporting dashboard</li>
+                    <li><span class="check">&#10003;</span> Email support</li>
+                    <li><span class="check">&#10003;</span> Monthly optimization review</li>
+                </ul>
+                <a href="#cta" class="pricing-btn secondary">Get Started</a>
+            </div>
+            <div class="pricing-card featured animate-on-scroll">
+                <div class="pricing-badge">Most Popular</div>
+                <h3>Professional</h3>
+                <div class="price">R7,500<span>/month</span></div>
+                <p>For growing businesses ready to transform their entire operation.</p>
+                <ul class="pricing-features">
+                    <li><span class="check">&#10003;</span> Unlimited workflows</li>
+                    <li><span class="check">&#10003;</span> All integrations included</li>
+                    <li><span class="check">&#10003;</span> Document processing & generation</li>
+                    <li><span class="check">&#10003;</span> Advanced AI with human checkpoints</li>
+                    <li><span class="check">&#10003;</span> Priority WhatsApp support</li>
+                    <li><span class="check">&#10003;</span> Weekly performance reports</li>
+                    <li><span class="check">&#10003;</span> Dedicated account manager</li>
+                </ul>
+                <a href="#cta" class="pricing-btn primary">Get Started</a>
+            </div>
+            <div class="pricing-card animate-on-scroll">
+                <h3>Enterprise</h3>
+                <div class="price">Custom</div>
+                <p>Tailored solutions for larger organizations with complex needs.</p>
+                <ul class="pricing-features">
+                    <li><span class="check">&#10003;</span> Everything in Professional</li>
+                    <li><span class="check">&#10003;</span> Custom AI model training</li>
+                    <li><span class="check">&#10003;</span> On-premise deployment option</li>
+                    <li><span class="check">&#10003;</span> SLA with guaranteed uptime</li>
+                    <li><span class="check">&#10003;</span> 24/7 phone support</li>
+                    <li><span class="check">&#10003;</span> Quarterly strategy sessions</li>
+                    <li><span class="check">&#10003;</span> White-label options</li>
+                </ul>
+                <a href="#cta" class="pricing-btn secondary">Contact Sales</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section" id="cta">
+        <div class="cta-orb"></div>
+        <div class="cta-content">
+            <h2>Ready to Reclaim Your<br><span class="gradient-text">Time?</span></h2>
+            <p>Join South African businesses that are replacing busywork with intelligent automation. Book a free 30-minute discovery call.</p>
+            <div class="hero-cta-group">
+                <a href="mailto:hello@axiomflow.co.za" class="btn-primary">
+                    Book Free Discovery Call
+                    <span>&#8594;</span>
+                </a>
+                <a href="mailto:hello@axiomflow.co.za" class="btn-secondary">
+                    Email Us
+                    <span>&#9993;</span>
+                </a>
+            </div>
+            <p style="margin-top: 30px; font-size: 0.85rem; color: var(--gray-dark);">
+                No commitment required. We will map your workflows and show you the potential savings before you spend a cent.
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="#" class="logo">
+                    <div class="logo-icon">&#9889;</div>
+                    Axiom Flow
+                </a>
+                <p>AI-powered workflow automation for South African businesses. We implement, configure, and manage intelligent automations so your team can focus on growth.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#">Integrations</a></li>
+                    <li><a href="#">Security</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Case Studies</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="mailto:hello@axiomflow.co.za">hello@axiomflow.co.za</a></li>
+                    <li><a href="#">WhatsApp</a></li>
+                    <li><a href="#">LinkedIn</a></li>
+                    <li><a href="#">Book a Call</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Axiom Flow. All rights reserved. Built for South African businesses.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 3D Particle Canvas
+        const canvas = document.getElementById('hero-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouseX = 0, mouseY = 0;
+        let isTouch = window.matchMedia('(pointer: coarse)').matches;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.z = Math.random() * 1000;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3;
+                this.speedZ = Math.random() * 2 + 0.5;
+                this.opacity = Math.random() * 0.5 + 0.2;
+                this.color = Math.random() > 0.5 ? '#0066ff' : '#00d4ff';
+            }
+            update() {
+                this.z -= this.speedZ;
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.z <= 0) { this.reset(); this.z = 1000; }
+                if (!isTouch) {
+                    const dx = mouseX - this.x;
+                    const dy = mouseY - this.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        this.x -= dx * 0.01;
+                        this.y -= dy * 0.01;
+                    }
+                }
+            }
+            draw() {
+                const scale = 1000 / (1000 + this.z);
+                const x2d = (this.x - canvas.width / 2) * scale + canvas.width / 2;
+                const y2d = (this.y - canvas.height / 2) * scale + canvas.height / 2;
+                const size2d = this.size * scale;
+                const opacity2d = this.opacity * scale;
+                ctx.beginPath();
+                ctx.arc(x2d, y2d, size2d, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = opacity2d;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        const particleCount = isTouch ? 80 : 150;
+        for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+
+        function drawConnections() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 100) {
+                        const scale1 = 1000 / (1000 + particles[i].z);
+                        const scale2 = 1000 / (1000 + particles[j].z);
+                        const x1 = (particles[i].x - canvas.width / 2) * scale1 + canvas.width / 2;
+                        const y1 = (particles[i].y - canvas.height / 2) * scale1 + canvas.height / 2;
+                        const x2 = (particles[j].x - canvas.width / 2) * scale2 + canvas.width / 2;
+                        const y2 = (particles[j].y - canvas.height / 2) * scale2 + canvas.height / 2;
+                        ctx.beginPath();
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.strokeStyle = '#0066ff';
+                        ctx.globalAlpha = (1 - dist / 100) * 0.15;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                        ctx.globalAlpha = 1;
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            drawConnections();
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+        });
+
+        // Scroll animations
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
